@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-        <title>weather.com</title>
 		
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<!--引入 element-ui 的样式，-->
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+		<!-- 必须先引入vue，  后使用element-ui -->
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+		<!-- 引入element 的组件库-->
+		<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+		    
 		<!-- Favicon -->
         <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.png">
 		
@@ -51,10 +58,16 @@
 				
 				<div class="top-nav-search">
 					<form>
-						<input type="text" class="form-control" placeholder="Search here">
-						<button class="btn" type="submit"><i class="fa fa-search"></i></button>
+						<input type="text" class="form-control" placeholder="Input city here">
 					</form>
 				</div>
+				<div class="top-nav-search">
+					<form>
+						<input type="date" value="2020-07-01"/>
+					</form>
+				</div>
+				
+
 				
 				<!-- Mobile Menu Toggle -->
 				<a class="mobile_btn" id="mobile_btn">
