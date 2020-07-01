@@ -1,8 +1,9 @@
 from flask import current_app, g, jsonify, request
-from backend.extension import api
+from backend.extension import api_ext
 from flask_restful import Resource, reqparse
 from backend.algorithm import get_weather
 from . import auth
+from . import api_bp
 
 
 class AuthApi(Resource):
@@ -29,11 +30,16 @@ class AuthApi(Resource):
 
 
 class UserApi(Resource):
-    pass
+    def post(self):
+        username = request.form.get('username')
+        password = request.form.get('password')
+        auth.register(username, password)
 
 
 class WeatherApi(Resource):
     def get(self):
+        if request.json is None:
+            return 400
         city = request.json['records']
         date = request.json['date']
         weather = get_weather(city, date)
@@ -43,6 +49,13 @@ class WeatherApi(Resource):
             'maximum': weather.max,
             'minimum': weather.min
         })
+
+
+api_ext.add_resource(WeatherApi, '/weather')
+api_ext.add_resource(AuthApi, '/auth/token')
+api_ext.add_resource(UserApi, '/user')
+
+
 
 
 

@@ -5,7 +5,7 @@ from flask_restful import Api
 from flask_httpauth import HTTPBasicAuth
 
 db = SQLAlchemy()
-api = Api()
+api_ext = Api()
 http_auth = HTTPBasicAuth()
 
 login_manager = LoginManager()

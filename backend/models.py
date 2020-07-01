@@ -11,7 +11,7 @@ class User(db.Model):
     username = db.Column(db.String(32), index=True)
     password_hash = db.Column(db.String(128))
 
-    def hash_password(self, password):
+    def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def validate_password(self, hashed_password):

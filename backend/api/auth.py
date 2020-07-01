@@ -1,5 +1,5 @@
 from flask import current_app, g, request
-from backend.extension import http_auth, db, api
+from backend.extension import http_auth, db, api_ext
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
 from backend.models import User
 
@@ -36,7 +36,14 @@ def login_auth(username_or_token, password):
 
 # TODO token should be returned if login with username
 
+
 def register(username, password):
-    pass
+    user = User(username=username)
+    user.set_password(password)
+    db.session.add(user)
+    db.session.commit()
+
+
+
 
 
