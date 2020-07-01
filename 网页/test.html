@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <!-- import CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <!-- import Vue before Element -->
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <!-- import JavaScript -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+<body>
+		<div id="app" class="block">
+			<el-form :inline="true" :model="formInline" class="demo-form-inline">
+			  <el-form-item label="城市选择">
+				<el-input v-model="input" placeholder="请输入城市"></el-input>
+			  </el-form-item>
+			  <el-form-item label="日期选择">
+			    <el-date-picker
+			      v-model="value2"
+			      align="right"
+			      type="date"
+			      placeholder="请选择日期"
+			      :picker-options="pickerOptions">
+			    </el-date-picker>
+			  </el-form-item>
+			  <el-form-item>
+			    <el-button type="primary" @click="onSubmit">查询</el-button>
+			  </el-form-item>
+			</el-form>
+		</div>
+</body>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: function() {
+        return { 
+  			visible: false,
+			formInline: {
+			          user: '',
+			          region: ''
+			        }
+  		}
+      }
+  	  
+    })
+   </script>
+</html>

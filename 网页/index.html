@@ -5,11 +5,12 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-		<!--引入 element-ui 的样式，-->
+
+		<!-- import CSS -->
 		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-		<!-- 必须先引入vue，  后使用element-ui -->
-		<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
-		<!-- 引入element 的组件库-->
+		<!-- import Vue before Element -->
+		<script src="https://unpkg.com/vue/dist/vue.js"></script>
+		<!-- import JavaScript -->
 		<script src="https://unpkg.com/element-ui/lib/index.js"></script>
 		    
 		<!-- Favicon -->
@@ -56,18 +57,28 @@
 					<i class="fe fe-text-align-left"></i>
 				</a>
 				
-				<div class="top-nav-search">
-					<form>
-						<input type="text" class="form-control" placeholder="Input city here">
-					</form>
-				</div>
-				<div class="top-nav-search">
-					<form>
-						<input type="date" value="2020-07-01"/>
-					</form>
-				</div>
 				
-
+				<div id="app" class="block">
+					<div id="app" class="block">
+						<el-form :inline="true" :model="formInline" class="demo-form-inline">
+						  <el-form-item label="城市选择">
+							<el-input v-model="input" placeholder="请输入城市"></el-input>
+						  </el-form-item>
+						  <el-form-item label="日期选择">
+						    <el-date-picker
+						      v-model="value2"
+						      align="right"
+						      type="date"
+						      placeholder="请选择日期"
+						      :picker-options="pickerOptions">
+						    </el-date-picker>
+						  </el-form-item>
+						  <el-form-item>
+						    <el-button type="primary" @click="onSubmit">查询</el-button>
+						  </el-form-item>
+						</el-form>
+					</div>
+				</div>
 				
 				<!-- Mobile Menu Toggle -->
 				<a class="mobile_btn" id="mobile_btn">
@@ -243,6 +254,53 @@
 		
 		<!-- Custom JS -->
 		<script  src="assets/js/script.js"></script>
+		
+		<script>
+		  new Vue({
+		    el: '#app',
+		    data: function() {
+		      return { 
+					visible: false ,
+					formInline: {
+					          user: '',
+					          region: ''},
+					pickerOptions: {
+					  disabledDate(time) {
+					    return time.getTime() > Date.now();
+					  },
+					  shortcuts: [{
+					    text: '今天',
+					    onClick(picker) {
+					      picker.$emit('pick', new Date());
+					    }
+					  }, {
+					    text: '昨天',
+					    onClick(picker) {
+					      const date = new Date();
+					      date.setTime(date.getTime() - 3600 * 1000 * 24);
+					      picker.$emit('pick', date);
+					    }
+					  }, {
+					    text: '一周前',
+					    onClick(picker) {
+					      const date = new Date();
+					      date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+					      picker.$emit('pick', date);
+					    }
+					  }]
+					},
+					value1: '',
+					value2: '',
+					input: ''
+				}
+		    },
+			 methods: {
+			      onSubmit() {
+			        console.log('submit!');
+			      }
+			    }	  
+		  })
+		 </script>
 		
     </body>
 </html>
