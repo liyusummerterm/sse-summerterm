@@ -6,6 +6,15 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+		<link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+		 
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+		 
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 		<!-- import CSS -->
 		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 		<!-- import Vue before Element -->
@@ -18,6 +27,8 @@
 		
 		<!-- Bootstrap CSS -->
         <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+		<link rel="stylesheet" href="assets/css/bootstrap.datetimepicker.min.css" media="screen">
+		<link rel="stylesheet" href="assets/css/bootstrap-datetimepicker.min.css" media="screen">
 		
 		<!-- Fontawesome CSS -->
         <link rel="stylesheet" href="assets/css/font-awesome.min.css">
@@ -26,7 +37,6 @@
         <link rel="stylesheet" href="assets/css/feathericon.min.css">
 		
 		<link rel="stylesheet" href="assets/plugins/morris/morris.css">
-		
 		<!-- Main CSS -->
         <link rel="stylesheet" href="assets/css/style.css">
 		
@@ -78,7 +88,7 @@
 						  </el-form-item>
 						</el-form>
 					</div>
-				</div>
+				</div>	
 				
 				<!-- Mobile Menu Toggle -->
 				<a class="mobile_btn" id="mobile_btn">
@@ -184,6 +194,38 @@
 					</li>
 					<!-- /User Menu -->
 					
+					<li class="nav-item dropdown noti-dropdown">
+						<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+							<span class="glyphicon glyphicon-user" aria-hidden="true"></span>Log in
+						</a>
+						<div class="dropdown-menu pull-right" style="min-width:250px" >
+							<div class="topnav-dropdown-header">
+								<span class="notification-title">Login your account</span>
+							</div>
+							<form class="form-horizontal" role="form">
+							  <div class="form-group">
+							    <label for="name" class="col-lg-5 control-label">Name</label>
+							    <div class="col-lg-6">
+							      <input type="text" class="form-control" id="firstname" placeholder="Name">
+							    </div>
+							  </div>
+							  <div class="form-group">
+							    <label for="password" class="col-lg-5 control-label">Password</label>
+							    <div class="col-lg-6">
+							      <input type="text" class="form-control" id="lastname" placeholder="Password">
+							    </div>
+							  </div>
+							  <div class="form-group">
+							  </div>
+							  <div class="form-group">
+							    <div class="col-sm-offset-5 col-sm-10">
+							      <button type="submit" class="btn btn-success">Log In</button>
+							    </div>
+							  </div>
+							</form>
+						</div>
+					</li>
+					
 				</ul>
 				<!-- /Header Right Menu -->
 				
@@ -239,11 +281,15 @@
 		<!-- /Main Wrapper -->
 		
 		<!-- jQuery -->
-        <script src="assets/js/jquery-3.2.1.min.js"></script>
-		
+        <script src="assets/js/jquery-3.2.1.min.js" charset="UTF-8"></script>
 		<!-- Bootstrap Core JS -->
         <script src="assets/js/popper.min.js"></script>
         <script src="assets/js/bootstrap.min.js"></script>
+		<script src="assets/js/bootstrap.js"></script>
+		<script src="assets/js/bootstrap.timepicker.js"></script>
+		<script src="assets/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+		<script src="assets/js/bootstrap-datetimepicker.el.js" charset="UTF-8"></script>
+		
 		
 		<!-- Slimscroll JS -->
         <script src="assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
@@ -254,6 +300,19 @@
 		
 		<!-- Custom JS -->
 		<script  src="assets/js/script.js"></script>
+		
+		<script>
+		    $('.form_date').datetimepicker({
+		        language:  'fr',
+		        weekStart: 1,
+		        todayBtn:  1,
+		        autoclose: 1,
+		        todayHighlight: 1,
+		        startView: 2,
+		        minView: 2,
+		        forceParse: 0
+		    });
+		</script>
 		
 		<script>
 		  new Vue({
