@@ -58,4 +58,9 @@ sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 
-kubeadm init 
+kubeadm init --pod-network-cidr=192.168.0.0/16
+
+mkdir -p /home/s18301120/.kube
+sudo cp /etc/kubernetes/admin.conf /home/s18301120/.kube/config
+sudo chown s18301120:student /home/s18301120/.kube/config
+
