@@ -1400,11 +1400,11 @@ button.bg-danger:hover {
 	right: 0;
 	top: 0;
 	z-index: 1001;
-	height: 60px;
+	height: 40px;
 }
 .header .header-left {
 	float: left;
-	height: 60px;
+	height: 40px;
 	padding: 0 20px;
 	position: relative;
 	text-align: center;
@@ -1414,10 +1414,10 @@ button.bg-danger:hover {
 }
 .header .header-left .logo {
 	display: inline-block;
-	line-height: 60px;
+	line-height: 40px;
 }
 .header .header-left .logo img {
-    max-height: 40px;
+    max-height: 38px;
     width: auto;
 }
 .header-left .logo.logo-small {
@@ -1988,7 +1988,7 @@ html.menu-opened body {
 }
 .page-wrapper {
 	margin-left: 60px;
-	padding-top: 60px;
+	padding-top: 0px;
 	position: relative;
 	transition: all 0.4s ease;
 }
