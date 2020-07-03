@@ -1400,9 +1400,29 @@ button.bg-danger:hover {
 	right: 0;
 	top: 0;
 	z-index: 1001;
+	height: 60px;
+}
+.header1 {
+	background: #fff;
+	border-bottom: 1px solid #f0f0f0;
+	left: 0;
+	position: fixed;
+	right: 0;
+	top: 0;
+	z-index: 1001;
 	height: 40px;
 }
 .header .header-left {
+	float: left;
+	height: 60px;
+	padding: 0 20px;
+	position: relative;
+	text-align: center;
+	width: 240px;
+	z-index: 1;
+	transition: all 0.2s ease-in-out;
+}
+.header1 .header-left {
 	float: left;
 	height: 40px;
 	padding: 0 20px;
@@ -1414,9 +1434,17 @@ button.bg-danger:hover {
 }
 .header .header-left .logo {
 	display: inline-block;
+	line-height: 60px;
+}
+.header1 .header-left .logo {
+	display: inline-block;
 	line-height: 40px;
 }
 .header .header-left .logo img {
+    max-height: 40px;
+    width: auto;
+}
+.header1 .header-left .logo img {
     max-height: 38px;
     width: auto;
 }
@@ -1427,6 +1455,12 @@ button.bg-danger:hover {
 	position: relative;
 }
 .header .dropdown-toggle:after {
+	display: none;
+}
+.header1 .dropdown-menu > li > a {
+	position: relative;
+}
+.header1 .dropdown-toggle:after {
 	display: none;
 }
 .header .has-arrow .dropdown-toggle:after {
@@ -1449,7 +1483,32 @@ button.bg-danger:hover {
 	width: 8px;
 	vertical-align: 2px;
 }
+.header1 .has-arrow .dropdown-toggle:after {
+	border-top: 0;
+	border-left: 0;
+	border-bottom: 2px solid #333;
+	border-right: 2px solid #333;
+	content: '';
+	height: 8px;
+	display: inline-block;
+	pointer-events: none;
+	-webkit-transform-origin: 66% 66%;
+	-ms-transform-origin: 66% 66%;
+	transform-origin: 66% 66%;
+	-webkit-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	transform: rotate(45deg);
+	-webkit-transition: all 0.15s ease-in-out;
+	transition: all 0.15s ease-in-out;
+	width: 8px;
+	vertical-align: 2px;
+}
 .header .has-arrow .dropdown-toggle[aria-expanded="true"]:after {
+	-webkit-transform: rotate(-135deg);
+	-ms-transform: rotate(-135deg);
+	transform: rotate(-135deg);
+}
+.header1 .has-arrow .dropdown-toggle[aria-expanded="true"]:after {
 	-webkit-transform: rotate(-135deg);
 	-ms-transform: rotate(-135deg);
 	transform: rotate(-135deg);
@@ -1531,6 +1590,35 @@ button.bg-danger:hover {
 }
 .header .user-menu .dropdown-menu > li > a:focus i,
 .header .user-menu .dropdown-menu > li > a:hover i {
+	color: #fff;
+}
+.header .dropdown-menu > li > a:focus,
+.header .dropdown-menu > li > a:hover {
+	background-color: #1e88e5;
+	color: #fff;
+}
+.header .dropdown-menu > li > a:focus i,
+.header .dropdown-menu > li > a:hover i {
+	color: #fff;
+}
+.header1 .dropdown-menu > li > a {
+	padding: 10px 18px;
+}
+.header1 .dropdown-menu > li > a i {
+	color: #1e88e5;
+	margin-right: 10px;
+	text-align: center;
+	width: 18px;
+}
+.header1 .user-menu .dropdown-menu > li > a i {
+	color: #1e88e5;
+	font-size: 16px;
+	margin-right: 10px;
+	min-width: 18px;
+	text-align: center;
+}
+.header1 .user-menu .dropdown-menu > li > a:focus i,
+.header1 .user-menu .dropdown-menu > li > a:hover i {
 	color: #fff;
 }
 .mobile_btn {
@@ -1987,6 +2075,12 @@ html.menu-opened body {
 	min-height: 100vh;
 }
 .page-wrapper {
+	margin-left: 60px;
+	padding-top: 60px;
+	position: relative;
+	transition: all 0.4s ease;
+}
+.page-wrapper1 {
 	margin-left: 60px;
 	padding-top: 0px;
 	position: relative;
