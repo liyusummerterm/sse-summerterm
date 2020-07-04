@@ -1,0 +1,2 @@
+microk8s.kubectl expose deployment esteemed-jackal-jenkins --name=nodeport --type=NodePort --name=jenkins-service
+microk8s.kubectl expose deployment kubernetes-dashboard --name=nodeport --type=NodePort --name=dashboard-service -n kube-system
