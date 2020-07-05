@@ -1,13 +1,21 @@
 pipeline {
-  agent any
+  agent {
+    kubernetes {
+      containerTemplate {
+        name 'python'
+        image 'python:latest'
+        ttyEnabled true
+        command 'cat'
+      }
+    }
+  }
   stages {
     stage('Environment') {
       steps {
         echo 'Hello World'
-        sh '''#!/bin/bash
-apt update
-apt install python3-pip
-pip3 install -r requirements.txt'''
+        container('python'){
+          sh "pip3 install -r requirements.txt"
+        }
       }
     }
 
