@@ -23,5 +23,5 @@ def runner(app):
     """A test runner for the app's Click commands."""
     return app.test_cli_runner()
 
-def hello_world():
+def test_hello_world():
     pass
