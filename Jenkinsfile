@@ -5,9 +5,9 @@ pipeline {
       steps {
         echo 'Hello World'
         sh '''#!/bin/bash
-echo I\\\'m fine
-touch TestFile
-sleep 30'''
+apt update
+apt install python3-pip
+pip3 install -r requirements.txt'''
       }
     }
 
