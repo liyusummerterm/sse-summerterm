@@ -21,12 +21,10 @@ pipeline {
 
     stage('Test') {
       steps {
-        echo 'Test'
-        sh '''#!/bin/bash
-echo I\\\'m fine
-sleep 30
-ls
-ip addr'''
+        container('python'){
+          sh "pip3 install pytest"
+          sh "pytest --junitxml=build/reports/"
+        }
       }
     }
 
@@ -39,6 +37,11 @@ ls
 ip addr'''
       }
     }
-
+  
+  }
+  post {
+    always {
+      junit 'build/reports/**/*.xml'
+    }
   }
 }
