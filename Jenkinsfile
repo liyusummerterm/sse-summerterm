@@ -4,7 +4,9 @@ pipeline {
     stage('Environment') {
       steps {
         echo 'Hello World'
-        sh '''touch TestFile
+        sh '''#!/bin/bash
+echo I\\\'m fine
+touch TestFile
 sleep 30'''
       }
     }
@@ -12,7 +14,9 @@ sleep 30'''
     stage('Test') {
       steps {
         echo 'Test'
-        sh '''sleep 30
+        sh '''#!/bin/bash
+echo I\\\'m fine
+sleep 30
 ls
 ip addr'''
       }
@@ -20,7 +24,9 @@ ip addr'''
 
     stage('Deploy') {
       steps {
-        sh '''sleep 30
+        sh '''#!/bin/bash
+echo I\\\'m fine
+sleep 30
 ls
 ip addr'''
       }
