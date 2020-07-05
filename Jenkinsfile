@@ -23,7 +23,7 @@ pipeline {
       steps {
         container('python'){
           sh "pip3 install pytest"
-          sh "pytest --junitxml=build/reports/"
+          sh "pytest --junitxml=build/reports.xml"
         }
       }
     }
@@ -41,7 +41,7 @@ ip addr'''
   }
   post {
     always {
-      junit 'build/reports/**/*.xml'
+      junit 'build/reports.xml'
     }
   }
 }
