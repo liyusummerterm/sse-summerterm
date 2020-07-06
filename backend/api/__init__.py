@@ -4,6 +4,7 @@ from backend.extension import api_ext
 
 api_bp = Blueprint('api', __name__)
 api_ext.init_app(api_bp)
+CORS(api_bp)
 
 
 from . import resource

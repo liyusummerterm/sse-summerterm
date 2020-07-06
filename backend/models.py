@@ -10,6 +10,8 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(32), index=True)
     password_hash = db.Column(db.String(128))
+    group = db.Column(db.Integer)
+    # 0 for admin, 1 for moderator, 2 for ordinary member
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -24,3 +26,8 @@ class Weather:
         self.date = date
         self.max = maximum
         self.min = minimum
+        self.seven_day_list = []
+
+
+
+
