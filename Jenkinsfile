@@ -36,7 +36,7 @@ pipeline {
 
     stage('Deploy') {
       steps {
-        sh '''#!/bin/bash
+        sh '''#!/bin/sh
 echo I\\\'m fine
 sleep 5
 ls'''
