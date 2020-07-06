@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Jul  2 17:51:16 2020
 
-@author: Zhusq
-
-"""
 import pandas as pd
 import numpy as np
 from hyperparams import hp
@@ -31,8 +26,9 @@ tmax_EmdLstmModel = EmdLstmModel(hp,series,task)
 
 # 打印预测七天的结果
 print("打印tmax预测七天的结果")
-print(tmax_EmdLstmModel.model_predict())
-
+max_predict = tmax_EmdLstmModel.model_predict()
+print(max_predict)
+np.savetxt('predict_max.csv', max_predict,delimiter=',')
 
 task = "tmin"
 
@@ -44,4 +40,6 @@ tmin_EmdLstmModel = EmdLstmModel(hp,series,task)
 
 # 打印预测七天的结果
 print("打印tmin预测七天的结果")
-print(tmin_EmdLstmModel.model_predict())
+min_predict = tmin_EmdLstmModel.model_predict()
+print(min_predict)
+np.savetxt('predict_min.csv', min_predict,delimiter=',')

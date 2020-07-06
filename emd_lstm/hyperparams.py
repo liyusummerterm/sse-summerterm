@@ -1,11 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Jul  2 14:57:50 2020
-
-@author: Zhusq
-
-"""
-
 
 class hp:
     
@@ -20,7 +13,7 @@ class hp:
     # 预测几天的数据
     forward_days = 7
     
-    epochs = 50
+    epochs = 100
     batch_size = 512
     
     # emd 子序列长度

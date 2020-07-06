@@ -1,27 +1,20 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Jul  2 15:06:49 2020
-
-@author: Zhusq
-
-"""
 import os
 import numpy as np
 import pandas as pd
-from hyperparams import hp
+import tensorflow.keras.layers as layers
 from PyEMD import EMD
-from keras.models import load_model
-from keras.models import Sequential
-from keras.layers import Dense, LSTM, Dropout
-from keras.callbacks import ModelCheckpoint
-from sklearn.preprocessing import MinMaxScaler
+from matplotlib import pyplot as plt
+from tensorflow.keras.models import load_model
+from tensorflow.keras.callbacks import ModelCheckpoint
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import Sequential
 
 class EmdLstmModel():
     
     def __init__(self,hp,series,task):
-        
-        
+
         self.series = series # 输入的序列
         self.epochs = hp.epochs
         self.batch_size = hp.batch_size
@@ -35,7 +28,9 @@ class EmdLstmModel():
         self.scaler_series = MinMaxScaler(feature_range=(0,1))
         
         self.X = self.get_emd_result(self.series)
-        # 对x,y进行归一化
+        ''' 
+        对x,y进行归一化 
+        '''
         self.X = self.scaler_emd.fit_transform(self.X)
         
         self.y = self.series.reshape(-1, 1)
@@ -65,12 +60,14 @@ class EmdLstmModel():
 
     '''创建lstm模型'''
     def create_model(self):
-        model = Sequential()
-        model.add(LSTM(self.rnn_hedden_size, 
-                       input_shape=self.lstm_input_shape, 
-                       return_sequences=True))
-        model.add(LSTM(self.rnn_hedden_size))
-        model.add(Dense(self.forward_days))
+        model = Sequential([
+            layers.LSTM(self.rnn_hedden_size,
+                 input_shape=self.lstm_input_shape,
+                 return_sequences=True),
+            layers.LSTM(self.rnn_hedden_size),
+            layers.Dense(self.forward_days)
+        ])
+
         model.compile(loss='mean_squared_error',
                       optimizer='adam',
                       metrics=['mse','mae'])
@@ -94,7 +91,7 @@ class EmdLstmModel():
 
         # 组成训练数据
         trian_X, train_y = self.sample_to_data(self.X,self.y)
-        # 拿出一部分不去训练。用来季检验算法性能
+        # 拿出一部分不去训练。用来检验算法性能
         X_train, X_validate, y_train, y_validate = train_test_split(trian_X,
                                                                     train_y,
                                                                   test_size=self.test_size)
@@ -107,7 +104,7 @@ class EmdLstmModel():
                              verbose=0, 
                              save_best_only=True,
                              mode='min')
-        
+
         print("fit and test model")
         model.fit(X_train, 
                     y_train,
@@ -115,13 +112,13 @@ class EmdLstmModel():
                     validation_data=(X_validate, y_validate), 
                     callbacks=[checkpoint],
                     batch_size=self.batch_size)
-        
-        
+
         return model
     
     def model_predict(self):
         # 组成测试数据
-        X_test = [[self.X[-self.look_back:]]]
+        X_test = self.X[-self.look_back:]
+        X_test = np.expand_dims(X_test, axis=0)
         y_predict = self.model.predict(X_test)
         y_predict = self.scaler_series.inverse_transform(y_predict.reshape(-1,1)).ravel()
         return y_predict
