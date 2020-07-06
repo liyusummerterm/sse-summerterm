@@ -5,20 +5,22 @@
                 <vheader></vheader>
             </el-header>
             <el-main><weather></weather></el-main>
-            <el-footer>Footer</el-footer>
+            <el-footer>footer</el-footer>
         </el-container>
     </div>
 </template>
 
 <script>
-    import Header from "./components/Header";
-    import Weather from "./components/Weather";
+    import Header from "../components/Header";
+    import Weather from "../components/Weather";
+
 
     export default {
         name: "Home",
         components: {
             'vheader': Header,
-            'weather': Weather
+            'weather': Weather,
+
         }
     }
 </script>

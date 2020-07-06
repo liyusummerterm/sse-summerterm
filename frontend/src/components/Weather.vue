@@ -41,18 +41,18 @@
                 </el-table-column>
                 <el-table-column
                         align="center"
-                        prop="weather.main"
-                        label="天气">
+                        prop="temp.avg"
+                        label="平均温度">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="temp.day"
-                        label="日间温度">
+                        label="最高温度">
                 </el-table-column>
                 <el-table-column
                         align="center"
                         prop="temp.night"
-                        label="夜间温度">
+                        label="最低温度">
                 </el-table-column>
                 <el-table-column
                         align="center"
@@ -69,6 +69,12 @@
                 </el-table-column>
             </el-table>
         </el-col>
+        <el-row align="middle">
+            <el-col :span="24" v-show="graphShow" align="middle">
+                <ve-line :data="temperatureData" :loading="loading" :settings="chartSettings"></ve-line>
+            </el-col>
+        </el-row>
+
 
     </div>
 
@@ -82,37 +88,74 @@
             greet: function () {
                 // let url = `http://api.openweathermap.org/data/2.5/forecast/daily?q=${this.input2}&mode=json&units=metric&cnt=7&appid=f12159c1f548ea9ab7b5ff1907b1df50`
                 let testUrl = `http://127.0.0.1:5000/api/weather?city=Beijing&date=1593835200`
+                this.loading = true;
                 this.$http.get(testUrl)
                     .then((response) => {
                         this.city = response.data.city.name;
                         this.country = response.data.city.country;
                         this.gridData = response.data.list
                         console.log(this.gridData);
+                        this.temperatureData.rows = [];
                         for (let i = 0; i < this.gridData.length; i++) {
                             //  this.gridData[i].img= '<img src="http://openweathermap.org/img/w/'+this.gridData[i].weather[0].icon+'.png">'
                             this.gridData[i].weather.main = this.gridData[i].weather[0].main
                             this.gridData[i].weather.icon = 'http://openweathermap.org/img/w/' + this.gridData[i].weather[0].icon + '.png';
                             var date = new Date(this.gridData[i].dt * 1000);
                             this.gridData[i].dt = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+                            this.gridData[i].temp.avg = (this.gridData[i].temp.max + this.gridData[i].temp.min) / 2;
+
+                            this.temperatureData.rows.push({
+                                'date': this.gridData[i].dt,
+                                'max': this.gridData[i].temp.max,
+                                'min': this.gridData[i].temp.min,
+                                'avg': (this.gridData[i].temp.max + this.gridData[i].temp.min) / 2
+                            })
                         }
-                        this.show = true
+                        this.loading = false;
+                        this.show = true;
+                        this.graphShow = true;
                     })
                     .catch(function (response) {
                         console.log(response)
+
                     })
-            }
+            },
+
         },
         data() {
+            this.chartSettings = {
+                labelMap: {
+                    'date': '日期',
+                        'max': '最高温度',
+                        'min': '最低温度',
+                        'avg': '平均温度'
+                }
+            }
             return {
-                msg: 'A Simple VUE Weather Demo',
+                msg: 'Weather forecast',
                 cityInput: null,
                 dateInput: new Date(),
                 show: false,
+                graphShow: true,
+                loading: true,
                 gridData: [],
                 city: null,
                 country: null,
+                temperatureData: {
+                    columns: ['date', 'max', 'min', 'avg'],
+                    rows: []
+
+                },
+                EMPTY_DATA: {
+                    columns: [],
+                    rows: []
+                },
+
 
             }
+        },
+        mounted() {
+            this.graphShow = false;
         }
 
 
@@ -208,4 +251,8 @@
         padding: 10px 0;
         background-color: #f9fafc;
     }
+    .ve-line {
+        margin: 0 10%;
+    }
+
 </style>
