@@ -20,7 +20,6 @@
         components: {
             'vheader': Header,
             'weather': Weather,
-
         }
     }
 </script>
