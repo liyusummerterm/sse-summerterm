@@ -39,8 +39,8 @@ def weather_schema(weather_object):
             "population": 1000000,
             "timezone": 28800
         },
-        "cod": "200",
-        "message": 4.076458,
+        "code": 20000,
+        "message": "Weather data fetched successfully!",
         "cnt": 7,
         "list": [
             {
