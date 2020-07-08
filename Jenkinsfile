@@ -1,12 +1,25 @@
 pipeline {
   agent {
     kubernetes {
-      containerTemplate {
-        name 'python'
-        image 'python:latest'
-        ttyEnabled true
-        command 'cat'
-      }
+      yaml """
+spec:
+  containers:
+  - name: python
+    image: python:latest
+    command:
+    - cat
+    tty: true
+  - name: helm
+    image: alpine/helm:2.16.9
+    command:
+    - cat
+    tty: true
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:debug
+    command:
+    - /busybox/cat
+    tty: true
+"""
     }
   }
   stages {
@@ -32,12 +45,29 @@ pipeline {
       }
     }
 
-    stage('Deploy') {
+    stage('Build Container Image') {
       steps {
-        sh '''#!/bin/bash
-echo I\\\'m fine
-sleep 5
-ls'''
+        container('kaniko'){
+          retry(3) {
+            sh "/kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=registry.container-registry:5000/chestnut/backend --insecure"
+          }
+        }
+      }
+    }
+
+    stage('Deploy For Test') {
+      steps {
+        container('helm'){
+          sh "helm upgrade --install backend-test --wait --cleanup-on-fail ./backend-chart"
+        }
+      }
+    }
+  
+    stage('Deploy For Production') {
+      steps {
+        container('helm'){
+          sh "helm upgrade --install backend --wait --cleanup-on-fail ./backend-chart"
+        }
       }
     }
   
