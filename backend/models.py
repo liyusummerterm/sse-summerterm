@@ -14,6 +14,8 @@ class User(db.Model):
     password_hash = db.Column(db.String(128))
     email = db.Column(db.String(128))
     group = db.Column(db.Integer, nullable=False, default=0)
+    avatar = db.Column(db.String(128), default='https://jandan.net/ofk.gif')
+    description = db.Column(db.String(128), default='This guy is lazy, no details have been filled yet.')
     # 0 for admin, 1 for moderator, 2 for ordinary member
 
     def set_password(self, password):

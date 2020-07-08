@@ -6,6 +6,9 @@ from .schema import *
 from . import auth
 from . import api_bp
 from backend.models import User, role_map
+import werkzeug, requests
+from io import BufferedReader, BytesIO
+import os
 
 
 class TokenApi(Resource):
@@ -22,7 +25,7 @@ class TokenApi(Resource):
         password = request.json['password']
 
         if not auth.login_auth(username, password):
-            return {'code': 50000, 'message': 'Username or password is wrong!'}, 400
+            return {'code': 50008, 'message': 'Username or password is wrong!'}
 
         token, expiration = auth.generate_token(g.current_user)
         response = jsonify({
@@ -134,6 +137,21 @@ class LogoutApi(Resource):
         }
 
 
+class AvatarUploadApi(Resource):
+    def post(self):
+        parse = reqparse.RequestParser()
+        parse.add_argument('img', type=werkzeug.datastructures.FileStorage, location='files')
+        args = parse.parse_args()
+        image_file = args['img']
+        image_file = BytesIO(image_file.read())
+        header = {'Authorization': '5Elz35ckLkjBKMurwW3FwiJ8wookBrds'}
+        r = requests.post('https://sm.ms/api/v2/upload', files={'smfile': image_file})
+        res = r.json()
+        if not res or res.get('success') is not True:
+            return {'code': 50000}, 400
+        return res
+
+
 api_ext.add_resource(WeatherApi, '/weather')
 api_ext.add_resource(TokenApi, '/user/login')
 api_ext.add_resource(UserApi, '/user', '/user/<int:user_id>', '/user/<string:username>')
@@ -141,3 +159,4 @@ api_ext.add_resource(DataApi, '/data')
 api_ext.add_resource(UserInfoApi, '/user/info')
 api_ext.add_resource(LogoutApi, '/user/logout')
 api_ext.add_resource(UserListApi, '/user/list')
+api_ext.add_resource(AvatarUploadApi, '/upload')
