@@ -14,7 +14,9 @@ pipeline {
       steps {
         echo 'Hello World'
         container('python'){
-          sh "pip3 install -r requirements.txt"
+          retry(3) {
+            sh "pip3 install -r requirements.txt"
+          }
         }
       }
     }
@@ -22,7 +24,9 @@ pipeline {
     stage('Test') {
       steps {
         container('python'){
-          sh "pip3 install pytest"
+          retry(3) {
+            sh "pip3 install pytest"
+          }
           sh "pytest --color=yes --junitxml=build/reports.xml"
         }
       }
