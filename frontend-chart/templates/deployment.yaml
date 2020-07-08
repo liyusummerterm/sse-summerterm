@@ -15,6 +15,8 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "frontend-chart.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+      annotations:
+        timestamp: "{{ date "20060102150405" .Release.Time }}"
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
