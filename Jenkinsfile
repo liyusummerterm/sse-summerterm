@@ -26,7 +26,9 @@ spec:
     stage('Environment') {
       steps {
         container('node'){
-          sh "cd frontend && yarn install --color=always"
+          retry(3) {
+            sh "cd frontend && yarn install --color=always"
+          }
         }
       }
     }
@@ -50,7 +52,9 @@ spec:
     stage('Build Container Image') {
       steps {
         container('kaniko'){
-          sh "/kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=registry.container-registry:5000/chestnut/frontend-vue --insecure"
+          retry(3) {
+            sh "/kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=registry.container-registry:5000/chestnut/frontend-vue --insecure"
+          }
         }
       }
     }
