@@ -26,7 +26,7 @@ spec:
     stage('Environment') {
       steps {
         container('node'){
-          sh "cd frontend && yarn install"
+          sh "cd frontend && yarn install --color=always"
         }
       }
     }
@@ -34,7 +34,7 @@ spec:
     stage('Build') {
       steps {
         container('node'){
-          sh "cd frontend && yarn build"
+          sh "cd frontend && yarn build --color=always"
         }
       }
     }
@@ -42,7 +42,7 @@ spec:
     stage('Test') {
       steps {
         container('node'){
-          sh "cd frontend && yarn lint"
+          sh "cd frontend && yarn lint --color=always"
         }
       }
     }
