@@ -5,7 +5,7 @@ pipeline {
 spec:
   containers:
   - name: python
-    image: python:latest
+    image: python:alpine
     command:
     - cat
     tty: true
