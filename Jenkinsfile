@@ -1,12 +1,25 @@
 pipeline {
   agent {
     kubernetes {
-      containerTemplate {
-        name 'node'
-        image 'node:lts-alpine'
-        ttyEnabled true
-        command 'cat'
-      }
+      yaml """
+spec:
+  containers:
+  - name: node
+    image: node:lts-alpine
+    command:
+    - cat
+    tty: true
+  - name: helm
+    image: alpine/helm:2.16.9
+    command:
+    - cat
+    tty: true
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:debug
+    command:
+    - /busybox/cat
+    tty: true
+"""
     }
   }
   stages {
@@ -34,12 +47,17 @@ pipeline {
       }
     }
 
+    stage('Build Container Image') {
+      steps {
+        container('kaniko'){
+          sh "/kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=registry.container-registry:5000/chestnut/frontend-vue --insecure"
+        }
+      }
+    }
+
     stage('Deploy') {
       steps {
-        sh '''#!/bin/sh
-echo I\\\'m fine
-sleep 5
-ls'''
+        sh "sleep 10"
       }
     }
   
