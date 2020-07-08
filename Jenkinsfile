@@ -61,7 +61,9 @@ spec:
 
     stage('Deploy') {
       steps {
-        sh "sleep 10"
+        container('helm'){
+          sh "helm upgrade --install frontend-vue ./frontend-chart"
+        }
       }
     }
   
