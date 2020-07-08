@@ -23,7 +23,7 @@ pipeline {
       steps {
         container('python'){
           sh "pip3 install pytest"
-          sh "pytest --junitxml=build/reports.xml"
+          sh "pytest --color=yes --junitxml=build/reports.xml"
         }
       }
     }
