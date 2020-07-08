@@ -1,4 +1,5 @@
 from flask import jsonify
+from backend.models import User, role_map
 
 
 def weather_schema(weather_object):
@@ -275,3 +276,42 @@ def weather_schema(weather_object):
             }
         ]
     }
+
+
+def user_list_schema():
+    users = User.query.all()
+    response = {
+        'code': 20000,
+        'data': {
+            'users': []
+        }
+    }
+    for i in users:
+        id = i.id
+        username = i.username
+        email = i.email
+        role = i.group
+        role_map = ['admin', 'moderator', 'user']
+        response['data']['users'].append({
+            'id': id,
+            'username': username,
+            'email': email,
+            'role': role_map[role]
+        })
+
+    return response
+
+
+def user_info_schema(user):
+    # TODO need to modify
+    return {
+        'code': 20000,
+        'data': {
+            'roles': [role_map[user.group]],
+            'introduction': '',
+            'avatar': 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+            'name': user.username
+        }
+
+    }
+

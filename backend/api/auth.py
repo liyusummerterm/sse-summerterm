@@ -17,6 +17,7 @@ def validate_token(token):
         data = s.loads(token)
     except (BadSignature, SignatureExpired):
         # TODO should return notice
+        print(token)
         return False
     user = User.query.get(data['id'])
     if user is None:
@@ -25,10 +26,12 @@ def validate_token(token):
 
 
 @http_auth.verify_password
-def login_auth(username_or_token, password):
+def login_auth(username_or_token, password=''):
+
     user = validate_token(username_or_token)
+    print(user)
     if not user:
-        user = User.query.filter_by(username_or_token).first()
+        user = User.query.filter_by(username=username_or_token).first()
         if not user or not user.validate_password(password):
             return False
     g.current_user = user
@@ -37,9 +40,11 @@ def login_auth(username_or_token, password):
 # TODO token should be returned if login with username
 
 
-def register(username, password):
+def register(username, password, email=None, role=2):
     user = User(username=username)
     user.set_password(password)
+    user.email = email
+    user.group = role
     db.session.add(user)
     db.session.commit()
 
