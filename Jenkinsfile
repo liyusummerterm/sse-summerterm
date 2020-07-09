@@ -14,10 +14,10 @@ spec:
     command:
     - cat
     tty: true
-  - name: kaniko
-    image: gcr.io/kaniko-project/executor:debug
+  - name: buildkit
+    image: moby/buildkit:v0.6.2-rootless
     command:
-    - /busybox/cat
+    - cat
     tty: true
 """
     }
@@ -47,9 +47,10 @@ spec:
 
     stage('Build Container Image') {
       steps {
-        container('kaniko'){
+        container('buildkit'){
           retry(3) {
-            sh "/kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=registry.container-registry:5000/chestnut/backend --insecure"
+            //sh "/kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=registry.container-registry:5000/chestnut/backend --insecure"
+            sh "buildctl --addr tcp://buildkitd:1234 build --frontend=dockerfile.v0 --local context=`pwd` --local dockerfile=`pwd` --output type=image,name=registry.container-registry:5000/chestnut/backend,push=true,registry.insecure=true"
           }
         }
       }
@@ -58,6 +59,7 @@ spec:
     stage('Deploy For Test') {
       steps {
         container('helm'){
+          sh "helm status backend-test | grep \"STATUS: DEPLOYED\" || helm delete backend-test --purge"
           sh "helm upgrade --install backend-test --wait --cleanup-on-fail ./backend-chart"
         }
       }
