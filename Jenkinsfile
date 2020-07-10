@@ -59,12 +59,36 @@ spec:
     stage('Deploy For Test') {
       steps {
         container('helm'){
-          sh "helm status backend-test | grep \"STATUS: DEPLOYED\" || helm delete backend-test --purge"
+          sh "set +e ; helm status backend-test | grep \"STATUS: DEPLOYED\" || helm delete backend-test --purge ; exit 0"
           sh "helm upgrade --install backend-test --wait --cleanup-on-fail ./backend-chart"
         }
       }
     }
+
+    stage('Test Test'){
+      failFast true
+      parallel {
+        stage('Get /'){
+          steps{
+            httpRequest responseHandle: 'NONE', url: 'http://backend-backend-chart/', wrapAsMultipart: false
+          }
+        }
+        stage('Get / 2'){
+          steps{
+            httpRequest responseHandle: 'NONE', url: 'http://backend-backend-chart/', wrapAsMultipart: false
+          }
+        }
+      }
+    }
   
+    stage('Clean up Test') {
+      steps {
+        container('helm') {
+          sh "helm delete backend-test --purge ; exit 0"
+        }
+      }
+    }
+
     stage('Deploy For Production') {
       steps {
         container('helm'){
