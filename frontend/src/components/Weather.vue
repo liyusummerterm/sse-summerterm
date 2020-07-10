@@ -91,10 +91,10 @@
                 this.loading = true;
                 this.$http.get(testUrl)
                     .then((response) => {
-                        this.city = response.data.city.name;
-                        this.country = response.data.city.country;
-                        this.gridData = response.data.list
-                        console.log(this.gridData);
+                        this.city = response.city.name;
+                        this.country = response.city.country;
+                        this.gridData = response.list
+                        console.log(this.city);
                         this.temperatureData.rows = [];
                         for (let i = 0; i < this.gridData.length; i++) {
                             //  this.gridData[i].img= '<img src="http://openweathermap.org/img/w/'+this.gridData[i].weather[0].icon+'.png">'
