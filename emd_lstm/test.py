@@ -2,13 +2,14 @@
 
 import pandas as pd
 import numpy as np
+import os
 from hyperparams import hp
 from model import EmdLstmModel
 
 def get_data(path,task):
-    data = pd.read_csv(hp.train_data)
-    data = data.dropna()
-    series = data[task]
+    data = pd.read_csv(path)
+    data = data.dropna(how = 'all')
+    series = data[task].dropna(how = 'all')
     series=series.values.astype('float64')
     series = np.reshape(series,(series.shape[0]))
     return series
@@ -28,5 +29,9 @@ def get_predict(filename):
         print("打印" + task + "预测七天的结果")
         predict = tmax_EmdLstmModel.model_predict()
         print(predict)
-        np.savetxt('predict_max.csv', predict, delimiter=',')
 
+path = 'data/'
+pathlist = os.listdir(path)
+for filename in pathlist:
+    print(filename[:-4])
+    get_predict(filename[:-4])

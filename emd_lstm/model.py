@@ -40,7 +40,7 @@ class EmdLstmModel():
 
         self.lstm_input_shape = (hp.look_back,hp.emd_len)
         
-        self.save_path = 'model/' + filename + '_' + task + '.h5'
+        self.save_path = 'model/' + task + '/' + filename + '.h5'
 
         if os.path.exists(self.save_path):
             self.model = load_model(self.save_path)
@@ -48,9 +48,9 @@ class EmdLstmModel():
             self.model = self.train_model()
             
     '''EMD 因式分解'''
-    def get_emd_result(self,series):
+    def get_emd_result(self, series):
         emd=EMD()
-        emd.emd(series)
+        emd.emd(series, None, 6)
         imfs, res = emd.get_imfs_and_residue()
         res = res.reshape(1,-1)
         return np.concatenate([imfs, res]).T
@@ -72,10 +72,9 @@ class EmdLstmModel():
         model.summary() 
         return model
     
-    def sample_to_data(self,x,y,jump=1):
-        '''
-        拼接训练数据，以look_back的数据去预测后forward_days的数据
-        '''
+    def sample_to_data(self, x, y, jump=1):
+
+        # 拼接训练数据，以look_back的数据去预测后forward_days的数据
         X = []
         Y = []
         for i in range(0, len(x) - self.look_back - self.forward_days + 1, jump):
@@ -87,7 +86,7 @@ class EmdLstmModel():
     def train_model(self):
 
         # 组成训练数据
-        trian_X, train_y = self.sample_to_data(self.X,self.y)
+        trian_X, train_y = self.sample_to_data(self.X, self.y)
         # 拿出一部分不去训练。用来检验算法性能
         X_train, X_validate, y_train, y_validate = train_test_split(trian_X,
                                                                     train_y,
