@@ -13,33 +13,20 @@ def get_data(path,task):
     series = np.reshape(series,(series.shape[0]))
     return series
 
+def get_predict(filename):
+    # 选择训练的数据
+    path = "data/" + filename + ".csv"
+    tasks = ['TMAX', 'TMIN', 'TAVG', 'PRCP']
+    for task in tasks :
+        # 获取数据
+        series = get_data(path, task)
 
-# 选择训练的数据
-path = "data/maxmin.csv"
-task  = "tmax"
+        # emd lstm 建模
+        tmax_EmdLstmModel = EmdLstmModel(hp, series, task, filename)
 
-# 获取数据
-series = get_data(path,task)
+        # 打印预测七天的结果
+        print("打印" + task + "预测七天的结果")
+        predict = tmax_EmdLstmModel.model_predict()
+        print(predict)
+        np.savetxt('predict_max.csv', predict, delimiter=',')
 
-# emd lstm 建模
-tmax_EmdLstmModel = EmdLstmModel(hp,series,task)
-
-# 打印预测七天的结果
-print("打印tmax预测七天的结果")
-max_predict = tmax_EmdLstmModel.model_predict()
-print(max_predict)
-np.savetxt('predict_max.csv', max_predict,delimiter=',')
-
-task = "tmin"
-
-# 获取数据
-series = get_data(path,task)
-
-# emd lstm 建模
-tmin_EmdLstmModel = EmdLstmModel(hp,series,task)
-
-# 打印预测七天的结果
-print("打印tmin预测七天的结果")
-min_predict = tmin_EmdLstmModel.model_predict()
-print(min_predict)
-np.savetxt('predict_min.csv', min_predict,delimiter=',')

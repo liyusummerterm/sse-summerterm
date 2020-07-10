@@ -13,7 +13,7 @@ from tensorflow.keras.models import Sequential
 
 class EmdLstmModel():
     
-    def __init__(self,hp,series,task):
+    def __init__(self, hp, series, task, filename):
 
         self.series = series # 输入的序列
         self.epochs = hp.epochs
@@ -40,11 +40,8 @@ class EmdLstmModel():
 
         self.lstm_input_shape = (hp.look_back,hp.emd_len)
         
-        if task == "tmax":
-            self.save_path = 'model/tmax_lstm.h5'
-        else:
-            self.save_path = 'model/tmin_lstm.h5'
-    
+        self.save_path = 'model/' + filename + '_' + task + '.h5'
+
         if os.path.exists(self.save_path):
             self.model = load_model(self.save_path)
         else:
