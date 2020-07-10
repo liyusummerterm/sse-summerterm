@@ -27,8 +27,9 @@ spec:
       steps {
         container('node'){
           sh "apk update && apk add git"
+          sh "sed -i '/resolved \"https/d' frontend/yarn.lock || exit 0"
           retry(3) {
-            sh "cd frontend && yarn install --color=always"
+            sh "cd frontend && yarn config set registry http://npm-verdaccio.npm-registry:4873/ && yarn install --color=always"
           }
         }
       }
