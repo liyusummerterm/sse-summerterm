@@ -23,6 +23,7 @@ import * as filters from './filters' // global filters
 
 import VeLine from 'v-charts/lib/line'
 import JsonCsv from 'vue-json-csv'
+import VueSocketIO from 'vue-socket.io'
 
 /**
  * If you don't want to use mock-server
@@ -41,6 +42,12 @@ Vue.use(Element, {
   size: Cookies.get('size') || 'medium', // set element-ui default size
   locale: enLang // 如果使用中文，无需设置，请删除
 })
+
+Vue.use(new VueSocketIO({
+  debug: true,
+  connection: 'localhost:5000'
+
+}))
 
 // register global utility filters
 Object.keys(filters).forEach(key => {

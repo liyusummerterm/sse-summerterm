@@ -82,6 +82,7 @@
 
 <script>
 import { fetchWeather } from '@/api/weather'
+
 export default {
   name: 'Weather',
   data() {
@@ -118,37 +119,50 @@ export default {
   mounted() {
     this.graphShow = false
   },
+  sockets: {
+    connect: function() {
+      console.log('socket connected')
+    },
+    getWeatherData: function(data) {
+      this.setWeatherData(data)
+    }
+  },
   methods: {
-    greet: function() {
+    setWeatherData: function(response) {
+      this.city = response.city.name
+      this.country = response.city.country
+      this.gridData = response.list
+      console.log(this.city)
+      this.temperatureData.rows = []
+      for (let i = 0; i < this.gridData.length; i++) {
+        //  this.gridData[i].img= '<img src="http://openweathermap.org/img/w/'+this.gridData[i].weather[0].icon+'.png">'
+        this.gridData[i].weather.main = this.gridData[i].weather[0].main
+        this.gridData[i].weather.icon = 'http://openweathermap.org/img/w/' + this.gridData[i].weather[0].icon + '.png'
+        var date = new Date(this.gridData[i].dt * 1000)
+        this.gridData[i].dt = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+        this.gridData[i].temp.avg = (this.gridData[i].temp.max + this.gridData[i].temp.min) / 2
+
+        this.temperatureData.rows.push({
+          'date': this.gridData[i].dt,
+          'max': this.gridData[i].temp.max,
+          'min': this.gridData[i].temp.min,
+          'avg': (this.gridData[i].temp.max + this.gridData[i].temp.min) / 2
+        })
+      }
+      this.loading = false
+      this.show = true
+      this.graphShow = true
+    }, greet: function() {
       // let url = `http://api.openweathermap.org/data/2.5/forecast/daily?q=${this.input2}&mode=json&units=metric&cnt=7&appid=f12159c1f548ea9ab7b5ff1907b1df50`
       // const testUrl = `http://127.0.0.1:5000/api/weather?city=Beijing&date=1593835200`
       this.loading = true
-
+      this.$socket.emit('query', {
+        'city': this.cityInput,
+        'date': this.dateInput
+      })
       fetchWeather()
         .then((response) => {
-          this.city = response.city.name
-          this.country = response.city.country
-          this.gridData = response.list
-          console.log(this.city)
-          this.temperatureData.rows = []
-          for (let i = 0; i < this.gridData.length; i++) {
-            //  this.gridData[i].img= '<img src="http://openweathermap.org/img/w/'+this.gridData[i].weather[0].icon+'.png">'
-            this.gridData[i].weather.main = this.gridData[i].weather[0].main
-            this.gridData[i].weather.icon = 'http://openweathermap.org/img/w/' + this.gridData[i].weather[0].icon + '.png'
-            var date = new Date(this.gridData[i].dt * 1000)
-            this.gridData[i].dt = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
-            this.gridData[i].temp.avg = (this.gridData[i].temp.max + this.gridData[i].temp.min) / 2
-
-            this.temperatureData.rows.push({
-              'date': this.gridData[i].dt,
-              'max': this.gridData[i].temp.max,
-              'min': this.gridData[i].temp.min,
-              'avg': (this.gridData[i].temp.max + this.gridData[i].temp.min) / 2
-            })
-          }
-          this.loading = false
-          this.show = true
-          this.graphShow = true
+          this.setWeatherData(response)
         })
         .catch(function(response) {
           console.log(response)
@@ -161,96 +175,97 @@ export default {
 </script>
 
 <style scoped>
-    .bounce-enter-active {
-        animation: bounce-in .5s;
-    }
+  .bounce-enter-active {
+    animation: bounce-in .5s;
+  }
 
-    .bounce-leave-active {
-        animation: bounce-out .5s;
-    }
+  .bounce-leave-active {
+    animation: bounce-out .5s;
+  }
 
-    @keyframes bounce-in {
-        0% {
-            transform: scale(0);
-        }
-        50% {
-            transform: scale(1.05);
-        }
-        100% {
-            transform: scale(1);
-        }
+  @keyframes bounce-in {
+    0% {
+      transform: scale(0);
     }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
 
-    @keyframes bounce-out {
-        0% {
-            transform: scale(1);
-        }
-        50% {
-            transform: scale(0.95);
-        }
-        100% {
-            transform: scale(0);
-        }
+  @keyframes bounce-out {
+    0% {
+      transform: scale(1);
     }
+    50% {
+      transform: scale(0.95);
+    }
+    100% {
+      transform: scale(0);
+    }
+  }
 
-    h1, h2 {
-        font-weight: normal;
-    }
+  h1, h2 {
+    font-weight: normal;
+  }
 
-    ul {
-        list-style-type: none;
-        padding: 0;
-    }
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
 
-    li {
-        display: inline-block;
-        margin: 0 10px;
-    }
+  li {
+    display: inline-block;
+    margin: 0 10px;
+  }
 
-    a {
-        color: #42b983;
-    }
+  a {
+    color: #42b983;
+  }
 
-    .el-table {
-        margin: 5% 10%;
-    }
+  .el-table {
+    margin: 5% 10%;
+  }
 
-    .el-row {
-        margin-bottom: 20px;
+  .el-row {
+    margin-bottom: 20px;
 
-    }
+  }
 
-    .el-row:last-child {
-        margin-bottom: 0;
-    }
+  .el-row:last-child {
+    margin-bottom: 0;
+  }
 
-    .el-col {
-        border-radius: 4px;
-    }
+  .el-col {
+    border-radius: 4px;
+  }
 
-    .bg-purple-dark {
-        background: #99a9bf;
-    }
+  .bg-purple-dark {
+    background: #99a9bf;
+  }
 
-    .bg-purple {
-        background: #d3dce6;
-    }
+  .bg-purple {
+    background: #d3dce6;
+  }
 
-    .bg-purple-light {
-        background: #e5e9f2;
-    }
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
 
-    .grid-content {
-        border-radius: 4px;
-        min-height: 36px;
-    }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
 
-    .row-bg {
-        padding: 10px 0;
-        background-color: #f9fafc;
-    }
-    .ve-line {
-        margin: 0 10%;
-    }
+  .row-bg {
+    padding: 10px 0;
+    background-color: #f9fafc;
+  }
+
+  .ve-line {
+    margin: 0 10%;
+  }
 
 </style>

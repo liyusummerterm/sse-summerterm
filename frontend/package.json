@@ -45,6 +45,7 @@
     "vue-image-crop-upload": "^2.5.0",
     "vue-json-csv": "^1.2.11",
     "vue-router": "3.0.2",
+    "vue-socket.io": "^3.0.9",
     "vue-splitpane": "1.0.4",
     "vuedraggable": "2.20.0",
     "vuex": "3.1.0",
