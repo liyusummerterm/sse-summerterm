@@ -1,0 +1,200 @@
+---
+# Source: verdaccio/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: npm-verdaccio
+  labels:
+    app: verdaccio
+    chart: verdaccio-0.16.2
+    release: npm
+    heritage: Tiller
+data:
+  config.yaml: |-
+    # This is the config file used for the docker images.
+    # It allows all users to do anything, so don't use it on production systems.
+    #
+    # Do not configure host and port under `listen` in this file
+    # as it will be ignored when using docker.
+    # see https://github.com/verdaccio/verdaccio/blob/master/docs/docker.md#docker-and-custom-port-configuration
+    #
+    # Look here for more config file examples:
+    # https://github.com/verdaccio/verdaccio/tree/master/conf
+    #
+
+    # path to a directory with all packages
+    storage: /verdaccio/storage/data
+
+    web:
+      # WebUI is enabled as default, if you want disable it, just uncomment this line
+      #enable: false
+      title: Verdaccio
+
+    auth:
+      htpasswd:
+        file: /verdaccio/storage/htpasswd
+        # Maximum amount of users allowed to register, defaults to "+infinity".
+        # You can set this to -1 to disable registration.
+        #max_users: 1000
+
+    # a list of other known repositories we can talk to
+    uplinks:
+      npmjs:
+        url: https://registry.npmjs.org/
+        maxage: 3d
+
+    packages:
+      '@*/*':
+        # scoped packages
+        access: $all
+        publish: $authenticated
+        proxy: npmjs
+
+      '**':
+        # allow all users (including non-authenticated users) to read and
+        # publish all packages
+        #
+        # you can specify usernames/groupnames (depending on your auth plugin)
+        # and three keywords: "$all", "$anonymous", "$authenticated"
+        access: $all
+
+        # allow all known users to publish packages
+        # (anyone can register by default, remember?)
+        publish: $authenticated
+
+        # if package is not available locally, proxy requests to 'npmjs' registry
+        proxy: npmjs
+
+    # To use `npm audit` uncomment the following section
+    middlewares:
+      audit:
+        enabled: true
+
+    # log settings
+    logs:
+      - {type: stdout, format: pretty, level: http}
+      #- {type: file, path: verdaccio.log, level: info}
+---
+# Source: verdaccio/templates/pvc.yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  labels:
+    app: npm-verdaccio
+    chart: "verdaccio-0.16.2"
+    release: "npm"
+    heritage: "Tiller"
+  name: npm-verdaccio
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "8Gi"
+---
+# Source: verdaccio/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: npm-verdaccio
+  labels:
+    app: verdaccio
+    chart: verdaccio-0.16.2
+    release: npm
+    heritage: Tiller
+spec:
+  ports:
+    - port: 4873
+      targetPort: http
+      protocol: TCP
+      name:
+  selector:
+    app: verdaccio
+    release: npm
+  type: ClusterIP
+---
+# Source: verdaccio/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: verdaccio
+    chart: verdaccio-0.16.2
+    heritage: Tiller
+    release: npm
+  name: npm-verdaccio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: verdaccio
+      release: npm
+  strategy:
+    type: Recreate
+    rollingUpdate: null
+  template:
+    metadata:
+      annotations:
+        checksum/config: f7d0f00bdda7def3756e99eb563143fc51eb5eea4ed2838b27c3d0701a2f0504
+      labels:
+        app: verdaccio
+        release: npm
+    spec:
+      initContainers:
+      - name: nfs-fixer
+        image: alpine
+        command:
+          - sh
+          - '-c'
+          - (chmod 0777 /verdaccio/storage; chgrp 101 /verdaccio/storage)
+        resources: {}
+        volumeMounts:
+          - name: storage
+            mountPath: /verdaccio/storage
+          - name: default-token-5bztj
+            readOnly: true
+            mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        imagePullPolicy: Always
+        securityContext:
+          runAsUser: 0
+      containers:
+        - name: verdaccio
+          image: "verdaccio/verdaccio:4.6.2"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4873
+              name: http
+          livenessProbe:
+            httpGet:
+              path: /-/ping
+              port: http
+            initialDelaySeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /-/ping
+              port: http
+            initialDelaySeconds: 5
+          resources:
+            {}
+
+          volumeMounts:
+            - mountPath: /verdaccio/storage
+              name: storage
+              readOnly: false
+            - mountPath: /verdaccio/conf
+              name: config
+              readOnly: true
+          env:
+      # Allow non-root user to access PersistentVolume
+      securityContext:
+        runAsUser: 10001
+        fsGroup: 101
+      volumes:
+      - name: config
+        configMap:
+          name: npm-verdaccio
+      - name: storage
+        persistentVolumeClaim:
+          claimName: npm-verdaccio
