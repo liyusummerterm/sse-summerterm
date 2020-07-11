@@ -5,7 +5,11 @@
         <vheader />
       </el-header>
       <el-main><weather /></el-main>
-      <el-footer><router-link to="/login"><div style="color: #0a76a4">Dashboard</div></router-link> </el-footer></el-container>
+      <el-footer><router-link to="/login">
+        <div style="color: #0a76a4">Dashboard</div>
+      </router-link>
+      </el-footer>
+    </el-container>
   </div>
 </template>
 

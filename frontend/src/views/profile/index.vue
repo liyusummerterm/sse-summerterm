@@ -84,6 +84,7 @@ export default {
       updateAvatar({
         'avatar': this.user.avater
       })
+      // this.$router.push({ path: '/permission/index?' + +new Date() }) TODO this might work
       location.reload()
     }
 
