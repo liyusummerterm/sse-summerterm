@@ -40,11 +40,11 @@ def login_auth(username_or_token, password=''):
 # TODO token should be returned if login with username
 
 
-def register(username, password, email=None, role=2):
+def register(username, password, email=None, role='user'):
     user = User(username=username)
     user.set_password(password)
     user.email = email
-    user.group = role
+    user.role = role
     db.session.add(user)
     db.session.commit()
 

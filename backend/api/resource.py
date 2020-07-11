@@ -58,7 +58,6 @@ class UserApi(Resource):
         username = request.json.get('username')
         password = request.json.get('password')
         email = request.json.get('email')
-        print(request.json)
         auth.register(username, password, email)
         return {'code': 20000, 'message': 'Register successfully!'}
 
@@ -68,7 +67,7 @@ class UserApi(Resource):
         if request.json.get('password') is not None:
             user.set_password(request.json['password'])
         try:
-            user.group = role_map.index(request.json['role'])
+            user.role = request.json['role']
         except ValueError:
             return {'code': 50000}
         db.session.commit()
@@ -82,20 +81,8 @@ class UserApi(Resource):
 
 
 class UserListApi(Resource):
-    def __init__(self):
-        pass
-
     def get(self):
         return user_list_schema()
-
-    def post(self):
-        pass
-
-    def put(self):
-        pass
-
-    def delete(self):
-        pass
 
 
 class UserInfoApi(Resource):
@@ -106,7 +93,7 @@ class UserInfoApi(Resource):
     def get(self):
         token = request.values['token']
         if not auth.login_auth(token):
-            return {'code': 50000}, 400
+            return {'code': 50008}, 400
         return user_info_schema(g.current_user)
 
 
@@ -125,7 +112,7 @@ class WeatherApi(Resource):
 
 class DataApi(Resource):
     def get(self):
-        pass
+        auth.register('admin', '111111')
 
 
 class LogoutApi(Resource):
@@ -152,6 +139,73 @@ class AvatarUploadApi(Resource):
         return res
 
 
+class AvatarChangeApi(Resource):
+    def __init__(self):
+        self.reqparser = reqparse.RequestParser()
+        self.reqparser.add_argument('avatar', type=str, required=True)
+
+    def put(self):
+        token = request.headers.get('X-Token')
+        user = auth.validate_token(token)
+        if not auth.validate_token(token):
+            return {'code': 50000, 'message': 'Token is invalid!'}, 400
+        else:
+            user.avatar = request.json.get('avatar')
+            db.session.commit()
+
+
+class RoleApi(Resource):
+    def __init__(self):
+        self.reqparser = reqparse.RequestParser()
+        self.reqparser.add_argument('key', type=str)
+        self.reqparser.add_argument('name', type=str)
+        self.reqparser.add_argument('description', type=str)
+        self.reqparser.add_argument('auth', type=str)
+
+    def get(self):
+        return role_list_schema()
+
+    def put(self, role_id):
+        role = Role.query.filter_by(id=role_id).one()
+        role.name = request.json['name']
+        role.role_description = request.json['description']
+        role.role_permission = json.dumps(request.json['auth'])
+        db.session.commit()
+        return {
+            'code': 20000,
+            'msg': 'Role updated successfully!'
+        }
+
+    def post(self):
+        role = Role(role_name=request.json['name'],
+                    role_description=request.json['description'])
+        role.role_permission = json.dumps(request.json['auth'])
+        db.session.add(role)
+        db.session.commit()
+        return {
+            'code': 20000,
+            'data': {
+                'key': role.id,
+                'name': role.role_name,
+                'description': role.role_description
+            }
+        }
+
+    def delete(self, role_id):
+        role = Role.query.filter_by(id=role_id).one()
+        db.session.delete(role)
+        db.session.commit()
+        return {
+            'code': 20000,
+            'msg': 'Delete successfully!'
+        }
+
+
+class RouteApi(Resource):
+    def get(self):
+        return route_info_schema()
+
+
 api_ext.add_resource(WeatherApi, '/weather')
 api_ext.add_resource(TokenApi, '/user/login')
 api_ext.add_resource(UserApi, '/user', '/user/<int:user_id>', '/user/<string:username>')
@@ -160,3 +214,6 @@ api_ext.add_resource(UserInfoApi, '/user/info')
 api_ext.add_resource(LogoutApi, '/user/logout')
 api_ext.add_resource(UserListApi, '/user/list')
 api_ext.add_resource(AvatarUploadApi, '/upload')
+api_ext.add_resource(AvatarChangeApi, '/avatar')
+api_ext.add_resource(RoleApi, '/roles', '/role/<int:role_id>', '/role')
+api_ext.add_resource(RouteApi, '/routes')

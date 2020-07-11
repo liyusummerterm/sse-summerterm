@@ -1,36 +1,17 @@
-from flask import jsonify
-from backend.models import User, Role, router_info
-import json
-import ast
+from flask import request
+from flask_socketio import emit, join_room, leave_room, send
+from backend.extension import socketio
 
 
-def weather_schema(weather_object):
-    weather_list = []
-    # for i, j in zip(weather_object.list, range(len(weather_object.list))):
-    #     weather_list.append({})
-    #     weather_list[j]['dt'] = i['dt']
-    #     weather_list[j]['temp'] = {}
-    #     weather_list[j]['temp']['min'] = i['temp']['min']
-    #     weather_list[j]['temp']['max'] = i['temp']['max']
-    #     weather_list[j].append({})
-    #     weather_list[j]['weather'] = []
-    #     weather_list[j]['weather'][0] = {
-    #         'main': i['weather'][0]['main']
-    #     }
-    #     weather_list[j]['speed'] = i['speed']
-    #     weather_list[j]['deg'] = i['deg']
-    #     weather_list[j]['clouds'] = i['clouds']
-    #     weather_list[j]['rain'] = i['rain']
-    #     weather_list[j]['pressure'] = i['pressure']
-    #     weather_list[j]['humidity'] = i['humidity']
+@socketio.on('connect')
+def on_connection():
+    send('Connect successfully!')
 
-    # return jsonify({
-    #     'city': {
-    #         'name': weather_object.city
-    #     },
-    #     'list': weather_list
-    # })
-    return {
+
+@socketio.on('query')
+def on_my_event(data):
+    print(data)
+    emit('getWeatherData', {
         "city": {
             "id": 1816670,
             "name": "Beijing",
@@ -277,90 +258,4 @@ def weather_schema(weather_object):
                 "rain": 15.32
             }
         ]
-    }
-
-
-def user_list_schema():
-    users = User.query.all()
-    response = {
-        'code': 20000,
-        'data': {
-            'users': []
-        }
-    }
-    for i in users:
-        id = i.id
-        username = i.username
-        email = i.email
-        role = i.role
-        response['data']['users'].append({
-            'id': id,
-            'username': username,
-            'email': email,
-            'role': role
-        })
-
-    return response
-
-
-def user_info_schema(user):
-    # TODO need to modify
-    role = Role.query.filter_by(role_name=user.role).one()
-    print(role.role_permission)
-    return {
-        'code': 20000,
-        'data': {
-            'roles': user.role,
-            'introduction': '',
-            'avatar': user.avatar,
-            'name': user.username,
-            'auth': ast.literal_eval(role.role_permission)
-        }
-
-    }
-
-
-def role_list_schema():
-    data = []
-    roles = Role.query.all()
-    for i in roles:
-        data.append({
-            'key': i.id,
-            'name': i.role_name,
-            'description': i.role_description,
-            'auth': ast.literal_eval(i.role_permission)
-        })
-
-    return {
-        'code': 20000,
-        'data': data
-    }
-    # return {
-    #     'code': 20000,
-    #     'data': [{
-    #         'key': 'admin',
-    #         'name': 'admin',
-    #         'description': 'admin',
-    #         'auth': [{
-    #             "name": "role",
-    #             "children": [
-    #                 {
-    #                     "name": "role.browse",
-    #                 },
-    #                 {
-    #                     "name": "role.delete",
-    #                 },
-    #                 {
-    #                     "name": "role.update"
-    #                 }
-    #             ]
-    #         }]
-    #     }]
-    # }
-
-
-def route_info_schema():
-    return {
-        'code': 20000,
-        'data': router_info
-    }
+    })
