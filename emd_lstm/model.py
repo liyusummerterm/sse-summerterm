@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 import tensorflow.keras.layers as layers
+import datetime
 from PyEMD import EMD
 from matplotlib import pyplot as plt
 from tensorflow.keras.models import load_model
@@ -111,9 +112,14 @@ class EmdLstmModel():
 
         return model
     
-    def model_predict(self):
+    def model_predict(self, date):
         # 组成测试数据
-        X_test = self.X[-self.look_back:]
+        d1 = datetime.datetime.strptime('2020-7-7', '%Y-%m-%d')
+        d2 = datetime.datetime.strptime(date, '%Y-%m-%d')
+
+        d = d1 - d2
+
+        X_test = self.X[-(self.look_back + d.days):(-d.days)]
         X_test = np.expand_dims(X_test, axis=0)
         y_predict = self.model.predict(X_test)
         y_predict = self.scaler_series.inverse_transform(y_predict.reshape(-1,1)).ravel()
