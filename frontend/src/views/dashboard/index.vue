@@ -9,7 +9,7 @@
         <span class="display_name">Hello, {{ name }}</span>
       </div>
     </div>
-    <div>
+    <div v-if="hasAuth('query.browse')">
       <el-row :gutter="10">
         <el-col :span="12" class="toolbar" align="right">
           <el-date-picker
@@ -34,7 +34,7 @@
     <el-row align="middle">
       <el-col v-show="graphShow" :span="24" align="middle">
         <ve-line :data="temperatureData" :loading="loading" :settings="chartSettings" />
-        <download-csv :data="csvData">Download</download-csv>
+        <download-csv v-if="hasAuth('query.download')" :data="csvData">Download</download-csv>
       </el-col>
 
     </el-row>
@@ -48,6 +48,7 @@
 import { mapGetters } from 'vuex'
 import PanThumb from '@/components/PanThumb'
 import { fetchWeather } from '@/api/weather'
+import { hasAuth } from '@/utils/auth'
 
 export default {
   name: 'DashboardEditor',
@@ -86,6 +87,8 @@ export default {
     ])
   },
   mounted() {
+    console.log(this.$store.getters['hasAuth']('query.browse'))
+    console.log(this.$store.getters['auth'])
     this.graphShow = false
   },
   methods: {
@@ -123,7 +126,8 @@ export default {
         .catch(function(response) {
           console.log(response)
         })
-    }
+    },
+    hasAuth
   }
 }
 </script>

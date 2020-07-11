@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Vue Element Admin',
+  title: 'Weather Forecast Dashboard',
 
   /**
    * @type {boolean} true | false

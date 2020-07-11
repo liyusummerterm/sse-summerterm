@@ -70,7 +70,7 @@ export default {
     async getUser() {
       this.user = {
         name: this.name,
-        role: this.roles.join(' | '),
+        role: this.roles,
         email: 'admin@test.com',
         avatar: this.avatar
       }

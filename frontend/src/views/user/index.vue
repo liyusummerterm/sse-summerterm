@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" @click="addUser">Add User</el-button>
+    <el-button v-if="hasAuth('user.add')" type="primary" @click="addUser">Add User</el-button>
     <el-table
       :data="allUserData"
       stripe
@@ -23,8 +23,8 @@
         label="Operation"
       >
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="editUser(scope)">Edit</el-button>
-          <el-button size="mini" type="danger" @click="deleteUser(scope)">Delete</el-button>
+          <el-button v-if="hasAuth('user.update')" size="mini" type="primary" @click="editUser(scope)">Edit</el-button>
+          <el-button v-if="hasAuth('user.delete')" size="mini" type="danger" @click="deleteUser(scope)">Delete</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -48,7 +48,7 @@
             v-model="userInfo.description"
             :autosize="{ minRows: 2, maxRows: 4}"
             type="textarea"
-            placeholder="Role Description"
+            placeholder="Description"
           />
         </el-form-item>
 
@@ -66,6 +66,7 @@
 import { getUserList } from '@/api/user'
 import { deepClone } from '@/utils'
 import { addUser, deleteUser, updateUser } from '@/api/role'
+import { hasAuth } from '@/utils/auth'
 
 const defaultUser = {
   id: '',
@@ -158,7 +159,8 @@ export default {
       const res = await getUserList()
       this.allUserData = res.data.users
       console.log(this.allUserData)
-    }
+    },
+    hasAuth
 
   }
 }

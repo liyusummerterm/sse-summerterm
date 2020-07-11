@@ -13,3 +13,7 @@ export function setToken(token) {
 export function removeToken() {
   return Cookies.remove(TokenKey)
 }
+
+export function hasAuth(auth) {
+  return this.$store.getters['hasAuth'](auth)
+}
