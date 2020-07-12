@@ -1,7 +1,9 @@
 FROM python:3.7-alpine
-RUN mkdir /app
+ENV FLASK_CONFIG production
+RUN apk add --update alpine-sdk && \
+    mkdir /app
 WORKDIR /app
 COPY . /app
 RUN pip3 install -r requirements.txt && \
-    pip3 install waitress
-CMD ["waitress-serve","--port","80","--call","backend:create_app"]
+    pip3 install gunicorn eventlet
+CMD ["gunicorn","-b","0.0.0.0:80","-w","1","--worker-class","eventlet","backend:create_app()"]

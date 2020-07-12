@@ -16,7 +16,7 @@ class DevelopmentConfig(BaseConfig):
 
 
 class ProductionConfig(BaseConfig):
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:KAo0LoHKSD@mysql-mariadb.mariadb.svc.cluster.local:3306'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:KAo0LoHKSD@mysql-mariadb.mariadb.svc.cluster.local:3306/wt_db'
 
 
 class TestingConfig(BaseConfig):
