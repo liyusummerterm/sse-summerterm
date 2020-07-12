@@ -54,7 +54,6 @@ export function filterAsyncRoutes(routes, authorization) {
     const tmp = { ...route }
     if (hasPermission(authorization, tmp)) {
       if (tmp.children) {
-        console.log('children: ')
         tmp.children = filterAsyncRoutes(tmp.children, authorization)
       }
       res.push(tmp)

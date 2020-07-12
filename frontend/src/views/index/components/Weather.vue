@@ -8,6 +8,7 @@
           align="right"
           type="date"
           placeholder="选择日期"
+          value-format="timestamp"
         />
       </el-col>
       <el-col :span="12" class="toolbar" align="left">
@@ -24,8 +25,6 @@
 
     <el-col v-if="show" :span="24">
       <el-button type="primary">{{ city }}</el-button>
-      <el-button type="primary">{{ country }}</el-button>
-
     </el-col>
     <el-col v-if="show" :span="24">
       <el-table
@@ -46,28 +45,19 @@
         />
         <el-table-column
           align="center"
-          prop="temp.day"
+          prop="temp.max"
           label="最高温度"
         />
         <el-table-column
           align="center"
-          prop="temp.night"
+          prop="temp.min"
           label="最低温度"
         />
         <el-table-column
           align="center"
-          prop="pressure"
-          label="气压值"
+          prop="temp.prcp"
+          label="降雨量"
         />
-        <el-table-column
-          align="center"
-          prop="weather.icon"
-          label="天气情况"
-        >
-          <template scope="scope">
-            <img :src="scope.row.weather.icon">
-          </template>
-        </el-table-column>
       </el-table>
     </el-col>
     <el-row align="middle">
@@ -81,7 +71,6 @@
 </template>
 
 <script>
-import { fetchWeather } from '@/api/weather'
 
 export default {
   name: 'Weather',
@@ -91,9 +80,11 @@ export default {
         'date': '日期',
         'max': '最高温度',
         'min': '最低温度',
-        'avg': '平均温度'
+        'avg': '平均温度',
+        'prcp': '降雨量'
       }
     }
+
     return {
       msg: 'Weather forecast',
       cityInput: null,
@@ -105,7 +96,7 @@ export default {
       city: null,
       country: null,
       temperatureData: {
-        columns: ['date', 'max', 'min', 'avg'],
+        columns: ['date', 'max', 'min', 'avg', 'prcp'],
         rows: []
 
       },
@@ -124,20 +115,18 @@ export default {
       console.log('socket connected')
     },
     getWeatherData: function(data) {
+      console.log(data)
       this.setWeatherData(data)
     }
   },
   methods: {
     setWeatherData: function(response) {
       this.city = response.city.name
-      this.country = response.city.country
       this.gridData = response.list
       console.log(this.city)
       this.temperatureData.rows = []
       for (let i = 0; i < this.gridData.length; i++) {
         //  this.gridData[i].img= '<img src="http://openweathermap.org/img/w/'+this.gridData[i].weather[0].icon+'.png">'
-        this.gridData[i].weather.main = this.gridData[i].weather[0].main
-        this.gridData[i].weather.icon = 'http://openweathermap.org/img/w/' + this.gridData[i].weather[0].icon + '.png'
         var date = new Date(this.gridData[i].dt * 1000)
         this.gridData[i].dt = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
         this.gridData[i].temp.avg = (this.gridData[i].temp.max + this.gridData[i].temp.min) / 2
@@ -146,7 +135,8 @@ export default {
           'date': this.gridData[i].dt,
           'max': this.gridData[i].temp.max,
           'min': this.gridData[i].temp.min,
-          'avg': (this.gridData[i].temp.max + this.gridData[i].temp.min) / 2
+          'avg': (this.gridData[i].temp.max + this.gridData[i].temp.min) / 2,
+          'prcp': this.gridData[i].temp.prcp
         })
       }
       this.loading = false
@@ -156,17 +146,21 @@ export default {
       // let url = `http://api.openweathermap.org/data/2.5/forecast/daily?q=${this.input2}&mode=json&units=metric&cnt=7&appid=f12159c1f548ea9ab7b5ff1907b1df50`
       // const testUrl = `http://127.0.0.1:5000/api/weather?city=Beijing&date=1593835200`
       this.loading = true
-      this.$socket.emit('query', {
+      this.$socket.client.emit('query', {
         'city': this.cityInput,
-        'date': this.dateInput
+        'date': (Number(this.dateInput) / 1000 | 0)
       })
-      fetchWeather()
-        .then((response) => {
-          this.setWeatherData(response)
-        })
-        .catch(function(response) {
-          console.log(response)
-        })
+
+      // fetchWeather({
+      //   'city': this.cityInput,
+      //   'date': (Number(this.dateInput) / 1000 | 0)
+      // })
+      //   .then((response) => {
+      //     this.setWeatherData(response)
+      //   })
+      //   .catch(function(response) {
+      //     console.log(response)
+      //   })
     }
 
   }

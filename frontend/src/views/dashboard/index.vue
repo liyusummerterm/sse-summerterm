@@ -17,6 +17,7 @@
             align="right"
             type="date"
             placeholder="选择日期"
+            value-format="timestamp"
           />
         </el-col>
         <el-col :span="12" class="toolbar" align="left">
@@ -59,7 +60,8 @@ export default {
         'date': '日期',
         'max': '最高温度',
         'min': '最低温度',
-        'avg': '平均温度'
+        'avg': '平均温度',
+        'prcp': '降雨量'
       }
     }
     return {
@@ -71,11 +73,15 @@ export default {
       show: false,
       loading: true,
       temperatureData: {
-        columns: ['date', 'max', 'min', 'avg'],
+        columns: ['date', 'max', 'min', 'avg', 'prcp'],
         rows: []
 
       },
-      csvData: []
+      csvData: [],
+      queryData: {
+        date: this.dateInput,
+        city: this.cityInput
+      }
 
     }
   },
@@ -97,16 +103,16 @@ export default {
       // let testUrl = `http://127.0.0.1:5000/api/weather?city=Beijing&date=1593835200`
       // this.loading = true;
       // this.$http.get(testUrl)
-      fetchWeather().then((response) => {
+      const city = this.cityInput
+      const date = (Number(this.dateInput) / 1000 | 0)
+      fetchWeather({ 'city': city, 'date': date }).then((response) => {
+        console.log(response)
+        response = response.data
         this.city = response.city.name
-        this.country = response.city.country
         this.gridData = response.list
 
         this.temperatureData.rows = []
         for (let i = 0; i < this.gridData.length; i++) {
-          //  this.gridData[i].img= '<img src="http://openweathermap.org/img/w/'+this.gridData[i].weather[0].icon+'.png">'
-          this.gridData[i].weather.main = this.gridData[i].weather[0].main
-          this.gridData[i].weather.icon = 'http://openweathermap.org/img/w/' + this.gridData[i].weather[0].icon + '.png'
           var date = new Date(this.gridData[i].dt * 1000)
           this.gridData[i].dt = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
           this.gridData[i].temp.avg = (this.gridData[i].temp.max + this.gridData[i].temp.min) / 2
@@ -115,7 +121,8 @@ export default {
             'date': this.gridData[i].dt,
             'max': this.gridData[i].temp.max,
             'min': this.gridData[i].temp.min,
-            'avg': (this.gridData[i].temp.max + this.gridData[i].temp.min) / 2
+            'avg': (this.gridData[i].temp.max + this.gridData[i].temp.min) / 2,
+            'prcp': this.gridData[i].temp.prcp
           })
         }
         this.loading = false

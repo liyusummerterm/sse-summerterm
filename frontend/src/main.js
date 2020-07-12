@@ -23,7 +23,12 @@ import * as filters from './filters' // global filters
 
 import VeLine from 'v-charts/lib/line'
 import JsonCsv from 'vue-json-csv'
-import VueSocketIO from 'vue-socket.io'
+import VueSocketIOExt from 'vue-socket.io-extended'
+import io from 'socket.io-client'
+
+const socket = io('http://127.0.0.1:5000')
+
+Vue.use(VueSocketIOExt, socket)
 
 /**
  * If you don't want to use mock-server
@@ -43,11 +48,10 @@ Vue.use(Element, {
   locale: enLang // 如果使用中文，无需设置，请删除
 })
 
-Vue.use(new VueSocketIO({
-  debug: true,
-  connection: 'localhost:5000'
-
-}))
+// Vue.use(new VueSocketIO({
+//   debug: true,
+//   connection: 'http://localhost:5000'
+// }))
 
 // register global utility filters
 Object.keys(filters).forEach(key => {

@@ -1202,6 +1202,11 @@
   resolved "https://registry.npm.taobao.org/@types/sizzle/download/@types/sizzle-2.3.2.tgz#a811b8c18e2babab7d542b3365887ae2e4d9de47"
   integrity sha1-qBG4wY4rq6t9VCszZYh64uTZ3kc=
 
+"@types/socket.io-client@1.4.33":
+  version "1.4.33"
+  resolved "https://registry.npm.taobao.org/@types/socket.io-client/download/@types/socket.io-client-1.4.33.tgz#8e705b9b3f7fba6cb329d27cd2eda222812adbf1"
+  integrity sha1-jnBbmz9/umyzKdJ80u2iIoEq2/E=
+
 "@types/stack-utils@^1.0.1":
   version "1.0.1"
   resolved "https://registry.npm.taobao.org/@types/stack-utils/download/@types/stack-utils-1.0.1.tgz#0a851d3bd96498fa25c33ab7278ed3bd65f06c3e"
@@ -10375,7 +10380,7 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
-socket.io-client@^2.1.1:
+socket.io-client@^2.1.1, socket.io-client@^2.3.0:
   version "2.3.0"
   resolved "https://registry.npm.taobao.org/socket.io-client/download/socket.io-client-2.3.0.tgz#14d5ba2e00b9bcd145ae443ab96b3f86cbcc1bb4"
   integrity sha1-FNW6LgC5vNFFrkQ6uWs/hsvMG7Q=
@@ -11781,6 +11786,13 @@ vue-router@3.0.2:
   version "3.0.2"
   resolved "https://registry.npm.taobao.org/vue-router/download/vue-router-3.0.2.tgz?cache=0&sync_timestamp=1593769516133&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fvue-router%2Fdownload%2Fvue-router-3.0.2.tgz#dedc67afe6c4e2bc25682c8b1c2a8c0d7c7e56be"
   integrity sha1-3txnr+bE4rwlaCyLHCqMDXx+Vr4=
+
+vue-socket.io-extended@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.npm.taobao.org/vue-socket.io-extended/download/vue-socket.io-extended-4.0.3.tgz#23effb90145e2521b4bafe84c27d07b28d2ca3ca"
+  integrity sha1-I+/7kBReJSG0uv6Ewn0Hso0so8o=
+  dependencies:
+    "@types/socket.io-client" "1.4.33"
 
 vue-socket.io@^3.0.9:
   version "3.0.9"
