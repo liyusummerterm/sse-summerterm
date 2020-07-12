@@ -2,3 +2,5 @@ venv/
 .idea/
 __pycache__/
 *.db
+backend-algo/emd_lstm/model
+backend-algo/emd-lstm/data
