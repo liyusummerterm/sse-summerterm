@@ -10,7 +10,7 @@ from flask_cors import CORS
 import os
 
 
-def create_app(config_name=None):
+def create_app(config_name='production'):
     if config_name is None:
         config_name = os.getenv('FLASK_CONFIG', 'development')
 
