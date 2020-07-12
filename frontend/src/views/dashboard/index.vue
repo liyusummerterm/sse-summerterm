@@ -18,12 +18,20 @@
             type="date"
             placeholder="选择日期"
             value-format="timestamp"
+            :picker-options="pickerOptions"
           />
         </el-col>
         <el-col :span="12" class="toolbar" align="left">
           <el-form :inline="true">
             <el-form-item>
-              <el-input v-model="cityInput" placeholder="Please input city name" />
+              <!--            <el-input v-model="cityInput" placeholder="请输入城市名称" />-->
+              <el-select v-model="cityInput">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
             <el-form-item>
               <el-button @click="greet">export data</el-button>
@@ -48,7 +56,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import PanThumb from '@/components/PanThumb'
-import { fetchWeather } from '@/api/weather'
+import { fetchCityList, fetchWeather } from '@/api/weather'
 import { hasAuth } from '@/utils/auth'
 
 export default {
@@ -67,7 +75,7 @@ export default {
     return {
       emptyGif: 'https://wpimg.wallstcn.com/0e03b7da-db9e-4819-ba10-9016ddfdaed3',
       cityInput: null,
-      dateInput: new Date(),
+      dateInput: new Date(2020, 6, 7),
       gridData: [],
       graphShow: true,
       show: false,
@@ -81,7 +89,13 @@ export default {
       queryData: {
         date: this.dateInput,
         city: this.cityInput
-      }
+      },
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > new Date(2020, 6, 6) // js的month从0开始 什么傻逼玩意
+        }
+      },
+      options: []
 
     }
   },
@@ -96,6 +110,14 @@ export default {
     console.log(this.$store.getters['hasAuth']('query.browse'))
     console.log(this.$store.getters['auth'])
     this.graphShow = false
+    fetchCityList().then((res) => {
+      res = res.data
+      for (const item of res.city_list) {
+        this.options.push({
+          value: item
+        })
+      }
+    })
   },
   methods: {
     greet: function() {
@@ -105,12 +127,16 @@ export default {
       // this.$http.get(testUrl)
       const city = this.cityInput
       const date = (Number(this.dateInput) / 1000 | 0)
+      this.$message('Data computing...')
       fetchWeather({ 'city': city, 'date': date }).then((response) => {
         console.log(response)
         response = response.data
         this.city = response.city.name
         this.gridData = response.list
-
+        this.$message({
+          message: 'Data computed!',
+          type: 'success'
+        })
         this.temperatureData.rows = []
         for (let i = 0; i < this.gridData.length; i++) {
           var date = new Date(this.gridData[i].dt * 1000)

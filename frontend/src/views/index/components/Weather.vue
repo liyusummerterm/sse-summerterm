@@ -9,12 +9,20 @@
           type="date"
           placeholder="选择日期"
           value-format="timestamp"
+          :picker-options="pickerOptions"
         />
       </el-col>
       <el-col :span="12" class="toolbar" align="left">
         <el-form :inline="true">
           <el-form-item>
-            <el-input v-model="cityInput" placeholder="请输入城市名称" />
+            <!--            <el-input v-model="cityInput" placeholder="请输入城市名称" />-->
+            <el-select v-model="cityInput">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :value="item.value"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item>
             <el-button @click="greet">查询</el-button>
@@ -71,7 +79,7 @@
 </template>
 
 <script>
-
+import { fetchCityList } from '@/api/weather'
 export default {
   name: 'Weather',
   data() {
@@ -88,7 +96,7 @@ export default {
     return {
       msg: 'Weather forecast',
       cityInput: null,
-      dateInput: new Date(),
+      dateInput: new Date(2020, 6, 6),
       show: false,
       graphShow: true,
       loading: true,
@@ -100,15 +108,29 @@ export default {
         rows: []
 
       },
+      options: [],
       EMPTY_DATA: {
         columns: [],
         rows: []
+      },
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > new Date(2020, 6, 6) // 差了一个月 我暂且蒙在鼓里
+        }
       }
 
     }
   },
   mounted() {
     this.graphShow = false
+    fetchCityList().then((res) => {
+      res = res.data
+      for (const item of res.city_list) {
+        this.options.push({
+          value: item
+        })
+      }
+    })
   },
   sockets: {
     connect: function() {
@@ -116,6 +138,10 @@ export default {
     },
     getWeatherData: function(data) {
       console.log(data)
+      this.$message({
+        message: 'Data computed!',
+        type: 'success'
+      })
       this.setWeatherData(data)
     }
   },
@@ -146,6 +172,7 @@ export default {
       // let url = `http://api.openweathermap.org/data/2.5/forecast/daily?q=${this.input2}&mode=json&units=metric&cnt=7&appid=f12159c1f548ea9ab7b5ff1907b1df50`
       // const testUrl = `http://127.0.0.1:5000/api/weather?city=Beijing&date=1593835200`
       this.loading = true
+      this.$message('Data computing...')
       this.$socket.client.emit('query', {
         'city': this.cityInput,
         'date': (Number(this.dateInput) / 1000 | 0)
@@ -211,7 +238,6 @@ export default {
   }
 
   li {
-    display: inline-block;
     margin: 0 10px;
   }
 
