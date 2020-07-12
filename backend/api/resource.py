@@ -52,7 +52,7 @@ class UserApi(Resource):
         self.reqparser.add_argument('email', type=str)
 
     def post(self):
-        if User.query.filter_by(request.json['username']).scalar() is not None:
+        if User.query.filter_by(username=request.json['username']).scalar() is not None:
             return {
                 'code': 50000,
                 'data': {
@@ -189,7 +189,7 @@ class RoleApi(Resource):
         }
 
     def post(self):
-        if Role.query.filter_by(request.json['name']).scalar() is not None:
+        if Role.query.filter_by(role_name=request.json['name']).scalar() is not None:
             return {
                 'code': 50000,
                 'data': {
