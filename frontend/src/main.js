@@ -26,7 +26,9 @@ import JsonCsv from 'vue-json-csv'
 import VueSocketIOExt from 'vue-socket.io-extended'
 import io from 'socket.io-client'
 
-const socket = io('http://127.0.0.1:5000')
+const socket = io({
+  transports: ['websocket']
+})
 
 Vue.use(VueSocketIOExt, socket)
 
