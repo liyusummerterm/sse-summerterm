@@ -5,7 +5,7 @@ from backend.algorithm import get_weather
 from .schema import *
 from . import auth
 from . import api_bp
-from backend.models import User, role_map
+from backend.models import User, role_map, city_list
 import werkzeug, requests
 from io import BufferedReader, BytesIO
 import os
@@ -16,9 +16,6 @@ class TokenApi(Resource):
         self.reqparser = reqparse.RequestParser()
         self.reqparser.add_argument('username', type=str, required=True)
         self.reqparser.add_argument('password', type=str, required=True)
-
-    def get(self):
-        pass
 
     def post(self):
         username = request.json['username']
@@ -55,6 +52,13 @@ class UserApi(Resource):
         self.reqparser.add_argument('email', type=str)
 
     def post(self):
+        if User.query.filter_by(request.json['username']).scalar() is not None:
+            return {
+                'code': 50000,
+                'data': {
+                    'message': 'Duplicated name!'
+                }
+            }
         username = request.json.get('username')
         password = request.json.get('password')
         email = request.json.get('email')
@@ -104,15 +108,23 @@ class WeatherApi(Resource):
         self.reqparser.add_argument('date', type=int, help='The start date is required and needs to be timestamp!')
 
     def get(self):
-        city = request.values['city']
-        date = request.values['date']
-        weather = get_weather(city, date)
-        return weather_schema(weather)
+        print(request.values)
+        city = request.values.get('city')
+        date = request.values.get('date')
+        return {
+            'code': 20000,
+            'data': weather_schema(city, date)
+        }
 
 
-class DataApi(Resource):
+class CityListApi(Resource):
     def get(self):
-        auth.register('admin', '111111')
+        return {
+            'code': 20000,
+            'data': {
+                'city_list': city_list
+            }
+        }
 
 
 class LogoutApi(Resource):
@@ -177,6 +189,13 @@ class RoleApi(Resource):
         }
 
     def post(self):
+        if Role.query.filter_by(request.json['name']).scalar() is not None:
+            return {
+                'code': 50000,
+                'data': {
+                    'message': 'Duplicated name!'
+                }
+            }
         role = Role(role_name=request.json['name'],
                     role_description=request.json['description'])
         role.role_permission = json.dumps(request.json['auth'])
@@ -209,7 +228,7 @@ class RouteApi(Resource):
 api_ext.add_resource(WeatherApi, '/weather')
 api_ext.add_resource(TokenApi, '/user/login')
 api_ext.add_resource(UserApi, '/user', '/user/<int:user_id>', '/user/<string:username>')
-api_ext.add_resource(DataApi, '/data')
+api_ext.add_resource(CityListApi, '/citylist')
 api_ext.add_resource(UserInfoApi, '/user/info')
 api_ext.add_resource(LogoutApi, '/user/logout')
 api_ext.add_resource(UserListApi, '/user/list')

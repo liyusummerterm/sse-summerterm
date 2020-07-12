@@ -145,3 +145,5 @@ router_scheme = '''
 '''
 
 router_info = json.loads(router_scheme)
+
+city_list = ['Beijing', 'Changchun', 'Changsha', 'Chengdu', 'Chongqing', 'Fuzhou', 'Guangzhou', 'Guiyang', 'Haikou', 'Hangzhou', 'Harbin', 'Hefei', 'Hohhot', 'Kunming', 'Lahsa', 'Macau', 'Nanchang', 'Nanjing', 'Nanning', 'Shanghai', 'Shijiazhuang', 'Taiyuan', 'Tianjin', 'Wuhan', 'Wulumuqi', 'Wushaoling', 'Xian', 'Xining', 'Yinchuan', 'Zhengzhou']
