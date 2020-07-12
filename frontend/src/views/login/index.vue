@@ -45,18 +45,20 @@
         </el-form-item>
       </el-tooltip>
 
+      <el-form-item>
+        <div style="width: 100%"><Verify :type="3" :show-button="false" @success="checkCaptcha(true)" @error="checkCaptcha(false)" /></div>
+      </el-form-item>
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
 
     </el-form>
-
   </div>
 </template>
 
 <script>
-
+import Verify from 'vue2-verify'
 export default {
   name: 'Login',
-  components: {},
+  components: { Verify },
   data() {
     const validateUsername = (rule, value, callback) => {
       callback()
@@ -82,7 +84,8 @@ export default {
       loading: false,
       showDialog: false,
       redirect: undefined,
-      otherQuery: {}
+      otherQuery: {},
+      correctCaptcha: ''
     }
   },
   watch: {
@@ -111,6 +114,9 @@ export default {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
+    checkCaptcha(ifPassed) {
+      this.correctCaptcha = ifPassed
+    },
     checkCapslock(e) {
       const { key } = e
       this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z')
@@ -126,6 +132,19 @@ export default {
       })
     },
     handleLogin() {
+      if (this.correctCaptcha === '') {
+        this.$message({
+          type: 'error',
+          message: 'Please input captcha!'
+        })
+        return false
+      } else if (!this.correctCaptcha) {
+        this.$message({
+          type: 'error',
+          message: 'Wrong captcha!'
+        })
+        return false
+      }
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
