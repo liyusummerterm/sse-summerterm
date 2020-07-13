@@ -20,7 +20,7 @@
                   field="img"
                   :width="300"
                   :height="300"
-                  url="http://127.0.0.1:5000/api/upload"
+                  url="/prod-api/api/upload"
                   :headers="headers"
                   img-format="png"
                   :with-credentials="false"
