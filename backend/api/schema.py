@@ -6,7 +6,7 @@ from backend.models import User, Role, router_info
 
 
 def weather_schema(city, date):
-    url = 'http://[240e:326:6645:7b00:98bc:488f:dff6:de10]:5001/weather'
+    url = 'http://192.168.32.1:5001/weather'
     header = {'Content-Type': 'application/json'}
     datas = {"city": city, "date": int(date)}
     r = requests.get(url, headers=header, data=json.dumps(datas))
